@@ -20,7 +20,7 @@ import * as nestAccessControl from "nest-access-control";
 import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { ProjectService } from "../project.service";
 import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
-import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { Public } from "../../decorators/public.decorator";
 import { ProjectCreateInput } from "./ProjectCreateInput";
 import { Project } from "./Project";
 import { ProjectFindManyArgs } from "./ProjectFindManyArgs";
@@ -49,27 +49,34 @@ export class ProjectControllerBase {
     @common.Body() data: ProjectCreateInput
   ): Promise<Project> {
     return await this.service.createProject({
-      data: data,
+      data: {
+        ...data,
+
+        owner: {
+          connect: data.owner,
+        },
+      },
       select: {
         createdAt: true,
         description: true,
         id: true,
         name: true,
-        owner: true,
+
+        owner: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
   }
 
-  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @Public()
   @common.Get()
   @swagger.ApiOkResponse({ type: [Project] })
   @ApiNestedQuery(ProjectFindManyArgs)
-  @nestAccessControl.UseRoles({
-    resource: "Project",
-    action: "read",
-    possession: "any",
-  })
   @swagger.ApiForbiddenResponse({
     type: errors.ForbiddenException,
   })
@@ -82,21 +89,22 @@ export class ProjectControllerBase {
         description: true,
         id: true,
         name: true,
-        owner: true,
+
+        owner: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
   }
 
-  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @Public()
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Project })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
-  @nestAccessControl.UseRoles({
-    resource: "Project",
-    action: "read",
-    possession: "own",
-  })
   @swagger.ApiForbiddenResponse({
     type: errors.ForbiddenException,
   })
@@ -110,7 +118,13 @@ export class ProjectControllerBase {
         description: true,
         id: true,
         name: true,
-        owner: true,
+
+        owner: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
@@ -141,13 +155,25 @@ export class ProjectControllerBase {
     try {
       return await this.service.updateProject({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          owner: {
+            connect: data.owner,
+          },
+        },
         select: {
           createdAt: true,
           description: true,
           id: true,
           name: true,
-          owner: true,
+
+          owner: {
+            select: {
+              id: true,
+            },
+          },
+
           updatedAt: true,
         },
       });
@@ -183,7 +209,13 @@ export class ProjectControllerBase {
           description: true,
           id: true,
           name: true,
-          owner: true,
+
+          owner: {
+            select: {
+              id: true,
+            },
+          },
+
           updatedAt: true,
         },
       });

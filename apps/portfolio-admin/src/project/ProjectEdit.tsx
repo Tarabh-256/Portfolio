@@ -1,5 +1,13 @@
 import * as React from "react";
-import { Edit, SimpleForm, EditProps, TextInput } from "react-admin";
+import {
+  Edit,
+  SimpleForm,
+  EditProps,
+  TextInput,
+  ReferenceInput,
+  SelectInput,
+} from "react-admin";
+import { UserTitle } from "../user/UserTitle";
 
 export const ProjectEdit = (props: EditProps): React.ReactElement => {
   return (
@@ -7,7 +15,9 @@ export const ProjectEdit = (props: EditProps): React.ReactElement => {
       <SimpleForm>
         <TextInput label="Description" multiline source="description" />
         <TextInput label="Name" source="name" />
-        <TextInput label="Owner" source="owner" />
+        <ReferenceInput source="owner.id" reference="User" label="Owner">
+          <SelectInput optionText={UserTitle} />
+        </ReferenceInput>
       </SimpleForm>
     </Edit>
   );

@@ -14,6 +14,7 @@ model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   lastName  String?
   password  String
+  projects  Project?
   roles     Json
   updatedAt DateTime @updatedAt
   username  String   @unique
@@ -24,6 +25,7 @@ model Project {
   description String?
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  owner       String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     String   @unique @db.ObjectId
   updatedAt   DateTime @updatedAt
 }
