@@ -18,3 +18,12 @@ model User {
   updatedAt DateTime @updatedAt
   username  String   @unique
 }
+
+model Project {
+  createdAt   DateTime @default(now())
+  description String?
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  owner       String
+  updatedAt   DateTime @updatedAt
+}
